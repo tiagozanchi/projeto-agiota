@@ -20,6 +20,9 @@ public class GameManager : MonoBehaviour
     {
         get => _carsInTrack;
     }
+    
+    private CarsController[] _carsInMission;
+
     [SerializeField]
     private PositionInTrack _positionController;
     private CameraController _cameraController;
@@ -46,7 +49,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        _currentMission = new Mission(8, 7500, CarColors.Blue, 3);
+        _currentMission = new Mission(15, 1000, CarColors.Blue, 3);
         _carsInTrack = new CarsController[_currentMission.NumberOfCars];
         SpawnCars();
     }
@@ -79,10 +82,26 @@ public class GameManager : MonoBehaviour
     {
         float spawnZ = -60;
         float spawnX = 15;
+        bool missionColorWasSpawned = false;
+        int numberOfMissionCars = 0;
         for(int i = 1; i <= _currentMission.NumberOfCars; i++)
         {
             _carsInTrack[i-1] = Instantiate(_cars[Random.Range(0,_cars.Length)], new Vector3(spawnX-i*5, 0.44f, spawnZ), Quaternion.identity).GetComponent<CarsController>();
             CarColors randomColor = (CarColors)Random.Range(0, 5);
+            _carsInTrack[i-1].SetColor(randomColor);
+
+            if (randomColor == _currentMission.TrackedCarColor)
+            {
+                numberOfMissionCars++;
+                missionColorWasSpawned = true;
+            }
+
+            if (i == _currentMission.NumberOfCars && !missionColorWasSpawned)
+            {
+                numberOfMissionCars++;
+                randomColor = _currentMission.TrackedCarColor;
+            }
+
             _carsInTrack[i-1].SetColor(randomColor);
 
             if (i % 5 == 0)
@@ -90,6 +109,17 @@ public class GameManager : MonoBehaviour
                 spawnX += 25; 
                 spawnZ += 13f;
             }
+        }
+
+        _carsInMission = new CarsController[numberOfMissionCars];
+        int index = 0;
+        for (int i = 0; i < _carsInTrack.Length; i++)
+        {
+            if (_carsInTrack[i].Color == _currentMission.TrackedCarColor)
+            {
+                _carsInMission[index] = _carsInTrack[i];
+                index++;
+            } 
         }
     }
 
@@ -115,6 +145,14 @@ public class GameManager : MonoBehaviour
 
     public void FinishRace(CarsController firstPlace)
     {
+        bool missionComplete = false;
+
+        foreach(CarsController car in _carsInMission)
+        {
+            if (_positionController.GetCarPosition(car) == _currentMission.TrackedCarPosition) missionComplete = true;
+        }
+
+        Debug.Log("Mission complete: "+missionComplete);
         _cameraController.CarToFollow = firstPlace.transform;
         _raceStarted = false;
     }

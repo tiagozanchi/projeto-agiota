@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -57,5 +58,10 @@ public class PositionInTrack : MonoBehaviour
         {
             GameManager.Instance.FinishRace(_carsInOrder[0]);
         }
+    }
+
+    public int GetCarPosition(CarsController car)
+    {
+        return Array.IndexOf(_carsInOrder, car)+1;
     }
 }

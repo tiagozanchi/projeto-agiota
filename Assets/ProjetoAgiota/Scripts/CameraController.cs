@@ -16,7 +16,7 @@ public class CameraController : MonoBehaviour
     {
         if (!GameManager.Instance.RaceStarted) return;
         
-        Vector3 newPos = new Vector3(transform.position.x, transform.position.y, _carToFollow.transform.position.z + _offset);
-        transform.position = Vector3.Lerp(transform.position, newPos, Time.deltaTime);
+        //Vector3 newPos = new Vector3(transform.position.x, transform.position.y, _carToFollow.transform.position.z + _offset);
+        //transform.position = Vector3.Lerp(transform.position, newPos, Time.deltaTime);
     }
 }

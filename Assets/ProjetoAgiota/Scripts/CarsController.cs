@@ -24,6 +24,8 @@ public class CarsController : MonoBehaviour
     private float _secondsToTryNewPos;
     private float _timeArrivedTargetPos;
     private bool _canLookForNewPos = true;
+    private bool _hasArrivedTarget = false;
+    private const float _damageRecoveryTime = 3f;
 
     // Start is called before the first frame update
     void Awake()
@@ -43,9 +45,9 @@ public class CarsController : MonoBehaviour
             _rb.velocity = Vector3.zero;
             _rb.MovePosition(transform.position + ((_targetPosition - transform.position) *_speed * Time.deltaTime));
         }
-        else if (_canLookForNewPos)
+        else if (!_hasArrivedTarget)
         {
-            _canLookForNewPos = false;
+            _hasArrivedTarget = true;
             _timeArrivedTargetPos = Time.time;
         }
 
@@ -61,28 +63,32 @@ public class CarsController : MonoBehaviour
 
         _rb.position += Vector3.right * (Mathf.Sin(Time.time) * _shakeAmount);
 
-        if (Time.time > _timeArrivedTargetPos+_secondsToTryNewPos && !_canLookForNewPos) TryNewPos();
+        if (Time.time > _timeArrivedTargetPos+_secondsToTryNewPos && _hasArrivedTarget && _canLookForNewPos) TryNewPos();
     }
 
     public void StartRacing(float luckAmount, float secondsToTryNewPos)
     {
-        _secondsToTryNewPos = 0.5f;//secondsToTryNewPos;
+        _secondsToTryNewPos = 4f;//secondsToTryNewPos;
         _luckAmount = luckAmount;
         _targetPosition = transform.position;
     }
 
     private void TryNewPos()
     {
-        float newZ;
-        bool forward = Random.Range(0,10) > 5f;
+        bool forward = Random.Range(0, 10) > 5f;
+        GetNewTargetPosition(forward);
+        _hasArrivedTarget = false;
+    }
 
-        float moveAmount = Random.Range(5,15);
-        
+    private void GetNewTargetPosition(bool forward) {
+
+        float moveAmount = Random.Range(5, 15);
+        float newZ;
+
         //Clamp para nao sair do mapa
-        newZ = forward ? Mathf.Clamp(transform.position.z - moveAmount,-60f,60f) : Mathf.Clamp(transform.position.z + moveAmount,-60f,60f);
-        
-        _targetPosition = new Vector3(Random.Range(Mathf.Clamp(transform.position.x-5f,-11,11f),Mathf.Clamp(transform.position.x+5f,-11,11f)), transform.position.y, newZ);
-        _canLookForNewPos = true;
+        newZ = forward ? Mathf.Clamp(transform.position.z - moveAmount, -60f, -6f) : Mathf.Clamp(transform.position.z + moveAmount, -60f, -6f);
+
+        _targetPosition = new Vector3(Random.Range(Mathf.Clamp(transform.position.x - 5f, -11, 11f), Mathf.Clamp(transform.position.x + 5f, -11, 11f)), transform.position.y, newZ);
     }
 
     public void SetColor(CarColors newColor)
@@ -91,5 +97,18 @@ public class CarsController : MonoBehaviour
         MeshRenderer[] carRenderers = GetComponentsInChildren<MeshRenderer>();
         
         foreach(Renderer r in carRenderers) r.material = _carMaterialsColors[(int)_color];
+    }
+
+    public void TakeDamage() 
+    {
+        GetNewTargetPosition(false);
+        _canLookForNewPos = false;
+        StartCoroutine(recoverFromDamage());
+    }
+
+    private IEnumerator recoverFromDamage() 
+    {
+        yield return new WaitForSeconds(_damageRecoveryTime);
+        _canLookForNewPos = true;
     }
 }

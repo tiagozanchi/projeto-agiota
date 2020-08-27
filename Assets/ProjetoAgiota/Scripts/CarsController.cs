@@ -18,6 +18,8 @@ public class CarsController : MonoBehaviour
     private Vector3 _targetPosition = Vector3.zero;
     private Quaternion _defaultRotation;
     private Rigidbody _rb;
+    private Animator _animator;
+    private AudioSource _audioSource;
     private float step = 0f;
     private float _shakeAmount;
     private float _luckAmount;
@@ -33,8 +35,10 @@ public class CarsController : MonoBehaviour
         _shakeAmount = Random.Range(-0.003f, 0.003f);
         _defaultRotation = transform.rotation;
         _rb = GetComponent<Rigidbody>();
+        _animator = GetComponent<Animator>();
+        _audioSource = GetComponent<AudioSource>();
     }
-    
+
     // Update is called once per frame
     void Update()
     {
@@ -103,6 +107,7 @@ public class CarsController : MonoBehaviour
     {
         GetNewTargetPosition(false);
         _canLookForNewPos = false;
+        _animator.SetTrigger("Crash");
         StartCoroutine(recoverFromDamage());
     }
 

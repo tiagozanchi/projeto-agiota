@@ -25,6 +25,12 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private PositionInTrack _positionController;
+    [SerializeField]
+    private SoundManager _soundManager;
+    public SoundManager SoundManager
+    {
+        get => _soundManager;
+    }
     private CameraController _cameraController;
     private int _followingCarIndex = 0;
 
@@ -49,6 +55,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        _soundManager.Play(SoundManager.Sounds.BGM_Gameplay,_soundManager.GetComponent<AudioSource>());
         _currentMission = new Mission(15, 1000, CarColors.Blue, 3);
         _carsInTrack = new CarsController[_currentMission.NumberOfCars];
         SpawnCars();
@@ -125,6 +132,7 @@ public class GameManager : MonoBehaviour
 
     private void PrepareToStart()
     {
+        _soundManager.Play(SoundManager.Sounds.Largada, GetComponent<AudioSource>());
         _trafficLight.SetActive(true);
         Invoke("StartRace", 4f);
     }

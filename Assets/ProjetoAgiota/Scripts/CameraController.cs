@@ -14,7 +14,7 @@ public class CameraController : MonoBehaviour
     
     void Update()
     {
-        if (!GameManager.Instance.RaceStarted) return;
+        if (_carToFollow == null) return;
         
         //Vector3 newPos = new Vector3(transform.position.x, transform.position.y, _carToFollow.transform.position.z + _offset);
         //transform.position = Vector3.Lerp(transform.position, newPos, Time.deltaTime);

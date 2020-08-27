@@ -1,10 +1,19 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class WeaponController : MonoBehaviour
 {
-
+    public Action<int> OnUse;
+    [SerializeField]
+    protected int _weaponCooldown;
+    [SerializeField]
+    private Sprite _weaponIcon;
+    public Sprite WeaponIcon
+    {
+        get => _weaponIcon;
+    }
     protected Collider streetCollider;
 
     protected void getStreetCollider() 
@@ -47,6 +56,7 @@ public class WeaponController : MonoBehaviour
                 GameObject gameObject = Instantiate(weapon);
                 Vector3 newPos = new Vector3(hit.point.x, 0.5f, hit.point.z);
                 gameObject.transform.position = newPos;
+                OnUse?.Invoke(_weaponCooldown);
             }
         }
     }

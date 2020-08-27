@@ -31,6 +31,12 @@ public class GameManager : MonoBehaviour
     {
         get => _soundManager;
     }
+    [SerializeField]
+    private WeaponManager _weaponManager;
+    public WeaponManager WeaponManager 
+    {
+        get => _weaponManager;
+    }
     private CameraController _cameraController;
     private int _followingCarIndex = 0;
 
@@ -56,7 +62,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         _soundManager.Play(SoundManager.Sounds.BGM_Gameplay,_soundManager.GetComponent<AudioSource>());
-        _currentMission = new Mission(15, 1000, CarColors.Blue, 3);
+        _currentMission = new Mission(15, 10000, CarColors.Blue, 3);
         _carsInTrack = new CarsController[_currentMission.NumberOfCars];
         SpawnCars();
     }
@@ -143,6 +149,7 @@ public class GameManager : MonoBehaviour
 
         _positionController.RaceTrackLength = _currentMission.TrackLength;
         _cameraController.CarToFollow = _carsInTrack[_followingCarIndex].transform;
+        WeaponManager.Init(GetComponents<WeaponController>());
         Randomizer.Randomize(_carsInTrack);
         for(int i = 0; i < _carsInTrack.Length; i++)
         {

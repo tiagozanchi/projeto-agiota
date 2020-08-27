@@ -26,4 +26,9 @@ public class BlockController : WeaponController
         showWeaponHint(transparentBlock);
         instantiateWeapon(block);
     }
+
+    void OnDisable()
+    {
+        transparentBlock.SetActive(false);
+    }
 }

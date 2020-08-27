@@ -26,4 +26,9 @@ public class BombController : WeaponController
         showWeaponHint(crosshair);
         instantiateWeapon(bomb);
     }
+
+    void OnDisable()
+    {
+        crosshair.SetActive(false);
+    }
 }

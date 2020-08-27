@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Weapon : MonoBehaviour
@@ -17,7 +16,15 @@ public class Weapon : MonoBehaviour
         if (other.CompareTag(CAR_TAG))
         {
             CarsController controller = other.gameObject.GetComponent<CarsController>();
-            controller.TakeDamage(damage);
+            if (damage < 0)
+            {
+                controller.Boost();
+                Destroy(gameObject);
+            }
+            else
+            {
+                controller.TakeDamage(damage);
+            }
         }
     }
 }

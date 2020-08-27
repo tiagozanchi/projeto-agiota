@@ -5,6 +5,8 @@ using UnityEngine;
 public class CarsController : MonoBehaviour
 {
     [SerializeField]
+    private GameObject _nitroParticles;
+    [SerializeField]
     private Material[] _carMaterialsColors;
     [SerializeField]
     private float _speed;
@@ -118,12 +120,21 @@ public class CarsController : MonoBehaviour
         GetNewTargetPosition(false, recoilDistance);
         _canLookForNewPos = false;
         _animator.SetTrigger("Crash");
-        StartCoroutine(recoverFromDamage());
+        StartCoroutine(WaitToGetNewPos());
     }
 
-    private IEnumerator recoverFromDamage() 
+    public void Boost()
+    {
+        _nitroParticles.SetActive(true);
+        _targetPosition = new Vector3(Random.Range(Mathf.Clamp(transform.position.x - 5f, -11, 11f), Mathf.Clamp(transform.position.x + 5f, -11, 11f)), transform.position.y, -70f);
+        _canLookForNewPos = false;
+        StartCoroutine(WaitToGetNewPos());
+    }
+
+    private IEnumerator WaitToGetNewPos() 
     {
         yield return new WaitForSeconds(_damageRecoveryTime);
+        _nitroParticles.SetActive(false);
         _canLookForNewPos = true;
     }
 }

@@ -69,7 +69,12 @@ public class HydrantController : WeaponController
                 {
                     gameObject.transform.rotation = Quaternion.Euler(0, 180, 0);
                 }
+                OnUse?.Invoke(_weaponCooldown);
             }
         }
+    }
+    void OnDisable()
+    {
+        hydrantTransparent.SetActive(false);
     }
 }

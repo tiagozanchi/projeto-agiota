@@ -1,5 +1,51 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2648575385688355444
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6022490535807360238}
+  - component: {fileID: 6172807546911940122}
+  m_Layer: 0
+  m_Name: WeaponsManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6022490535807360238
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2648575385688355444}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7117871945662407158}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6172807546911940122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2648575385688355444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c060413ea8033f545bdce55f8fb3ab82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _currentWeaponImage: {fileID: 0}
+  _nextWeaponImage: {fileID: 0}
+  _cooldownText: {fileID: 0}
 --- !u!1 &4925180392351448927
 GameObject:
   m_ObjectHideFlags: 0
@@ -165,7 +211,8 @@ GameObject:
   - component: {fileID: 7117871945662407159}
   - component: {fileID: 8010962370888826992}
   - component: {fileID: 8010962370888826993}
-  - component: {fileID: 4070937781536651406}
+  - component: {fileID: 4723378486966734170}
+  - component: {fileID: 2620652192894112669}
   - component: {fileID: 2456060133693210619}
   m_Layer: 0
   m_Name: GameManager
@@ -186,6 +233,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5344515939391013195}
+  - {fileID: 6022490535807360238}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -211,6 +259,7 @@ MonoBehaviour:
   _carsInTrack: []
   _positionController: {fileID: 0}
   _soundManager: {fileID: 8010962371897225630}
+  _weaponManager: {fileID: 6172807546911940122}
 --- !u!114 &8010962370888826992
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -223,6 +272,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 678d728a98411a7468e98bcd34effb79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _weaponCooldown: 3
+  _weaponIcon: {fileID: 21300000, guid: db6b2fc6b1622c746bf767e63a1a597d, type: 3}
   bomb: {fileID: 2816986879864722352, guid: 35f2356e5bea76345b0f25c30c11cab8, type: 3}
   crosshair: {fileID: 5738438495007950005, guid: ac447278ab42acb4d8f8c4ea4f8ccd9f,
     type: 3}
@@ -233,26 +284,47 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7117871945662407156}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8674e138ae5a7e9408b1117691e8db25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _weaponCooldown: 5
+  _weaponIcon: {fileID: 21300000, guid: 3004f34dfe3baa5499f917928b33320d, type: 3}
   transparentBlock: {fileID: 2279970525476674820, guid: c35bf5c2260824d478099bc3b7325a5a,
     type: 3}
   block: {fileID: 1510279745394148240, guid: ae86b3c0872665c44bf431fc90a158cf, type: 3}
---- !u!114 &4070937781536651406
+--- !u!114 &4723378486966734170
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7117871945662407156}
-  m_Enabled: 1
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3eef82afef45b014aabce912d36807eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _weaponCooldown: 8
+  _weaponIcon: {fileID: 21300000, guid: 6d3583b8259eae14d965abe6cc298209, type: 3}
+  transparentGas: {fileID: 2011138333400302176, guid: 65fa014e5b9e5d4478e0a5fd3221f39b,
+    type: 3}
+  gas: {fileID: 8631513751329639101, guid: 56818e10b111a9a41b5f853ed3970c3d, type: 3}
+--- !u!114 &2620652192894112669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7117871945662407156}
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0c46664d0f96c7c4ba6ba1f5013e4137, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _weaponCooldown: 3
+  _weaponIcon: {fileID: 21300000, guid: 15302d146998e7141816efa0580e870e, type: 3}
   hydrant: {fileID: 4522263979071640068, guid: e0be52e3e70b73f4bb45eee143a6ffa9, type: 3}
   hydrantTransparent: {fileID: 610281626255561974, guid: 7fda8ba782143e2499dc51d9e4656e1a,
     type: 3}

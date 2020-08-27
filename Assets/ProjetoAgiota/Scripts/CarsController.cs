@@ -79,20 +79,26 @@ public class CarsController : MonoBehaviour
 
     private void TryNewPos()
     {
-        bool forward = Random.Range(0, 10) > 5f;
+        bool forward = Random.Range(0, 10) > 2f;
         GetNewTargetPosition(forward);
         _hasArrivedTarget = false;
     }
 
-    private void GetNewTargetPosition(bool forward) {
-
-        float moveAmount = Random.Range(5, 15);
+    private void GetNewTargetPosition(bool forward, float moveAmount) 
+    {
+        if (moveAmount <= 0) {
+            moveAmount = Random.Range(5, 15);
+        }
         float newZ;
 
         //Clamp para nao sair do mapa
         newZ = forward ? Mathf.Clamp(transform.position.z - moveAmount, -60f, -6f) : Mathf.Clamp(transform.position.z + moveAmount, -60f, -6f);
 
         _targetPosition = new Vector3(Random.Range(Mathf.Clamp(transform.position.x - 5f, -11, 11f), Mathf.Clamp(transform.position.x + 5f, -11, 11f)), transform.position.y, newZ);
+    }
+
+    private void GetNewTargetPosition(bool forward) {
+        GetNewTargetPosition(forward, 0);
     }
 
     public void SetColor(CarColors newColor)
@@ -103,9 +109,13 @@ public class CarsController : MonoBehaviour
         foreach(Renderer r in carRenderers) r.material = _carMaterialsColors[(int)_color];
     }
 
-    public void TakeDamage() 
+    public void TakeDamage(float recoilDistance) 
     {
-        GetNewTargetPosition(false);
+        if (!_canLookForNewPos) {
+            return;
+        }
+
+        GetNewTargetPosition(false, recoilDistance);
         _canLookForNewPos = false;
         _animator.SetTrigger("Crash");
         StartCoroutine(recoverFromDamage());

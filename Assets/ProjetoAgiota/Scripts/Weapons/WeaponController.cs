@@ -5,7 +5,7 @@ using UnityEngine;
 public class WeaponController : MonoBehaviour
 {
 
-    private Collider streetCollider;
+    protected Collider streetCollider;
 
     protected void getStreetCollider() 
     {
@@ -14,7 +14,7 @@ public class WeaponController : MonoBehaviour
         if (street == null || streetCollider == null) Debug.LogError("There's no object with tag Street, or street has no collider");
     }
 
-    protected void showWeaponHint(GameObject hintObj) 
+    protected virtual void showWeaponHint(GameObject hintObj) 
     {
         if (hintObj == null) return;
 
@@ -33,7 +33,7 @@ public class WeaponController : MonoBehaviour
         }
     }
 
-    protected void instantiateWeapon (GameObject weapon)
+    protected virtual void instantiateWeapon (GameObject weapon)
     {
         if (weapon == null) return;
 

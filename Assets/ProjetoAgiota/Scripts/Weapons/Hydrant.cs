@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Block : Weapon
+public class Hydrant : Weapon
 {
     private const float SELF_DESTROY_TIME = 10f;
-    private const float recoilDamage = 25f;
+    private const float recoilDamage = 22f;
 
     private void Start()
     {
@@ -16,5 +16,4 @@ public class Block : Weapon
     {
         checkCollisionAndDealDamage(other, recoilDamage);
     }
-
 }

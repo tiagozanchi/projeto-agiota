@@ -165,6 +165,7 @@ GameObject:
   - component: {fileID: 7117871945662407159}
   - component: {fileID: 8010962370888826992}
   - component: {fileID: 8010962370888826993}
+  - component: {fileID: 4070937781536651406}
   - component: {fileID: 2456060133693210619}
   m_Layer: 0
   m_Name: GameManager
@@ -240,6 +241,21 @@ MonoBehaviour:
   transparentBlock: {fileID: 2279970525476674820, guid: c35bf5c2260824d478099bc3b7325a5a,
     type: 3}
   block: {fileID: 1510279745394148240, guid: ae86b3c0872665c44bf431fc90a158cf, type: 3}
+--- !u!114 &4070937781536651406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7117871945662407156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c46664d0f96c7c4ba6ba1f5013e4137, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hydrant: {fileID: 4522263979071640068, guid: e0be52e3e70b73f4bb45eee143a6ffa9, type: 3}
+  hydrantTransparent: {fileID: 610281626255561974, guid: 7fda8ba782143e2499dc51d9e4656e1a,
+    type: 3}
 --- !u!82 &2456060133693210619
 AudioSource:
   m_ObjectHideFlags: 0

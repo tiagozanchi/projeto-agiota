@@ -12,12 +12,12 @@ public class Weapon : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void OnTriggerEnter(Collider other)
+    protected void checkCollisionAndDealDamage(Collider other, float damage)
     {
         if (other.CompareTag(CAR_TAG))
         {
             CarsController controller = other.gameObject.GetComponent<CarsController>();
-            controller.TakeDamage();
+            controller.TakeDamage(damage);
         }
     }
 }

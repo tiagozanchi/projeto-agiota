@@ -14,6 +14,8 @@ public class PositionUI : MonoBehaviour
     public TMPro.TMP_FontAsset blackFont;
     public TMPro.TMP_FontAsset whiteFont;
 
+    public Transform missionStats;
+
     private const string bgDarkColorHex = "#33333399";
     private const string bgLightColorHex = "#77777799";
 
@@ -29,12 +31,17 @@ public class PositionUI : MonoBehaviour
         bool isOdd = carPos % 2 == 0;
         bg.color = isOdd ? dark : light;
         driver.font = isOdd ? whiteFont : blackFont;
-        setNewDriverInfo(driverName, carColor);
+        setNewDriverInfo(driverName, carColor, -1);
     }
 
-    public void setNewDriverInfo(string driverName, Color carColor)
+    public void setNewDriverInfo(string driverName, Color carColor, int missionStatsIndex)
     {
         driver.SetText(driverName);
         color.color = carColor;
+        
+        for (int i = 0; i < missionStats.childCount; i++)
+        {
+            missionStats.GetChild(i).gameObject.SetActive(i == missionStatsIndex);
+        }
     }
 }

@@ -74,7 +74,7 @@ public class GameManager : MonoBehaviour
     {
         _soundManager.Play(SoundManager.Sounds.BGM_Gameplay,_soundManager.GetComponent<AudioSource>());
         int randomCarAmount = Random.Range(6,10);
-        _currentMission = new Mission(randomCarAmount, 10000, (CarColors)Random.Range(0,5), Random.Range(1, randomCarAmount+1));
+        _currentMission = new Mission(randomCarAmount, 500, (CarColors)Random.Range(0,5), Random.Range(1, randomCarAmount+1));
         _carsInTrack = new CarsController[_currentMission.NumberOfCars];
         _missionText.text = string.Format("Um carro <color=#{0}>{1}</color> deve chegar na {2}ª posição!", ColorUtility.ToHtmlStringRGB(GetColor(_currentMission.TrackedCarColor)), _currentMission.TrackedCarColor.ToString(), _currentMission.TrackedCarPosition);
         _missionText.transform.parent.gameObject.SetActive(true);
@@ -132,7 +132,8 @@ public class GameManager : MonoBehaviour
 
     public void PrepareToStart()
     {
-        _missionText.transform.parent.gameObject.SetActive(false);
+        //kkkkk me desculpa por isso mas nao posso perder tempo
+        _missionText.transform.parent.parent.parent.gameObject.SetActive(false);
         _soundManager.Play(SoundManager.Sounds.Largada, GetComponent<AudioSource>());
         _trafficLight.SetActive(true);
         Invoke("StartRace", 4f);
@@ -226,4 +227,27 @@ public class GameManager : MonoBehaviour
         
         _endMissionPanel.SetActive(true);
 	}
+
+    public int GetCarMissionStats(CarsController car, int currentPosition)
+    {
+        if (car.Color == _currentMission.TrackedCarColor)
+        {
+            if (currentPosition > _currentMission.TrackedCarPosition)
+            {
+                return 0;
+            }
+            else if (currentPosition == _currentMission.TrackedCarPosition)
+            {
+                return 1;
+            }
+            else
+            {
+                return 2;
+            }
+        }
+        else
+        {
+            return -1;
+        }
+    }
 }

@@ -49,10 +49,11 @@ public class PositionInTrack : MonoBehaviour
         {
             positions[i].setNewDriverInfo(
                 _carsInOrder[i].gameObject.name, /* Driver name */
-                GameManager.GetColor(_carsInOrder[i].Color)); /* Car color */
+                GameManager.GetColor(_carsInOrder[i].Color),
+                GameManager.Instance.GetCarMissionStats(_carsInOrder[i], i+1)); /* Car color */
         }
 
-        _currentRacersAt += 1f;
+        _currentRacersAt += 10f * Time.deltaTime;
         _raceSlider.value = _currentRacersAt/_raceTrackLength;
 
         if (_raceSlider.value == 1)

@@ -6,11 +6,13 @@ using UnityEngine.UI;
 public class WeaponManager : MonoBehaviour
 {
     [SerializeField]
+    private GameObject _weaponPanel;
+    [SerializeField]
     private Image _currentWeaponImage;
     [SerializeField]
     private Image _nextWeaponImage;
     [SerializeField]
-    private TMPro.TextMeshProUGUI _cooldownText;
+    private Image _cooldownImage;
 
     private WeaponController[] _availableWeapons;
 
@@ -20,6 +22,8 @@ public class WeaponManager : MonoBehaviour
     public void Init(WeaponController[] availableWeapons)
     {
         _availableWeapons = availableWeapons;
+        _weaponPanel.SetActive(true);
+        _cooldownImage.fillAmount = 0;
         GetFirstWeapon();
     }
 
@@ -39,7 +43,6 @@ public class WeaponManager : MonoBehaviour
         _currentWeapon = _nextWeapon;
         _nextWeapon = _availableWeapons[Random.Range(0,_availableWeapons.Length)];
 
-        _currentWeapon.enabled = true;
         _currentWeapon.OnUse += UsedWeapon;
         UpdateIcons();
     }
@@ -60,17 +63,20 @@ public class WeaponManager : MonoBehaviour
         StartCoroutine(WaitCooldown(cooldown));
     }
 
-    IEnumerator WaitCooldown(int cooldown)
+    IEnumerator WaitCooldown(float cooldown)
     {
-        _cooldownText.text = cooldown.ToString();
-
-        for (int i = cooldown; i > 0; i--)
-        {
-            _cooldownText.text = i.ToString();
-            yield return new WaitForSeconds(1f);
-        }
-        
-        _cooldownText.text = "";
         GetNextWeapon();
+
+        float totalCooldown = cooldown;
+        while(cooldown > 0)
+        {
+            _cooldownImage.fillAmount = cooldown / totalCooldown;
+            yield return new WaitForSeconds(Time.deltaTime);
+            cooldown -= Time.deltaTime;
+        }
+
+        _cooldownImage.fillAmount = 0;
+        _currentWeapon.enabled = true;
+        
     }
 }

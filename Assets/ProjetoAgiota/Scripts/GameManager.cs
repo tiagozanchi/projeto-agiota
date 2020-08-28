@@ -73,7 +73,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         _soundManager.Play(SoundManager.Sounds.BGM_Gameplay,_soundManager.GetComponent<AudioSource>());
-        int randomCarAmount = Random.Range(6,15);
+        int randomCarAmount = Random.Range(6,10);
         _currentMission = new Mission(randomCarAmount, 10000, (CarColors)Random.Range(0,5), Random.Range(1, randomCarAmount+1));
         _carsInTrack = new CarsController[_currentMission.NumberOfCars];
         _missionText.text = string.Format("Um carro <color=#{0}>{1}</color> deve chegar na {2}ª posição!", ColorUtility.ToHtmlStringRGB(GetColor(_currentMission.TrackedCarColor)), _currentMission.TrackedCarColor.ToString(), _currentMission.TrackedCarPosition);
@@ -89,7 +89,9 @@ public class GameManager : MonoBehaviour
         int numberOfMissionCars = 0;
         for(int i = 1; i <= _currentMission.NumberOfCars; i++)
         {
-            _carsInTrack[i-1] = Instantiate(_cars[Random.Range(0,_cars.Length)], new Vector3(spawnX-i*5, 0.44f, spawnZ), Quaternion.identity).GetComponent<CarsController>();
+            CarsController controller = Instantiate(_cars[Random.Range(0, _cars.Length)], new Vector3(spawnX - i * 5, 0.44f, spawnZ), Quaternion.identity).GetComponent<CarsController>();
+            controller.gameObject.name = RiderNames.getRandomRiderName();
+            _carsInTrack[i - 1] = controller;
             CarColors randomColor = (CarColors)Random.Range(0, 5);
             bool isMissionCar = false;
 
@@ -174,7 +176,7 @@ public class GameManager : MonoBehaviour
         _cameraController.shakeDuration = amount;
     }
 
-    public Color GetColor(CarColors carColor)
+    public static Color GetColor(CarColors carColor)
     {
         switch (carColor)
         {
@@ -193,6 +195,15 @@ public class GameManager : MonoBehaviour
             default:
                 return Color.magenta;
         }
+    }
+
+	public int GetNumberOfCars()
+    {
+        if (_currentMission != null) 
+        {
+            return _currentMission.NumberOfCars;
+        } 
+        return -1;
     }
 
     public void LoadScene(int sceneIndex)
@@ -214,5 +225,5 @@ public class GameManager : MonoBehaviour
         panelTexts[3].text = "Missões consecutivas sem fracassar: "+conseqWins.ToString();
         
         _endMissionPanel.SetActive(true);
-    }
+	}
 }

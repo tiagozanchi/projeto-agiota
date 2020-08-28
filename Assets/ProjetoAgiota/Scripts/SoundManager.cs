@@ -20,7 +20,12 @@ public class SoundManager : MonoBehaviour
     {
         BGM_Gameplay,
         BGM_Menu,
-        Largada
+        Largada,
+        CarEngine,
+        DerraparOleo,
+        Explosion,
+        Crash,
+        Nitro
     }
 
     [SerializeField]

@@ -58,6 +58,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bbb9c21e7d57e849a7c0146cb91a768, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _soundToPlayOnHit: 5
 --- !u!1001 &380415633750920734
 PrefabInstance:
   m_ObjectHideFlags: 0

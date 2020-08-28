@@ -60,6 +60,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1b564af40fee7141a6e40ed494fb98f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _soundToPlayOnHit: 6
 --- !u!65 &-843191659977838305
 BoxCollider:
   m_ObjectHideFlags: 0

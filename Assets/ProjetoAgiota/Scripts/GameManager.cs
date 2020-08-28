@@ -1,11 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField]
     private GameObject _trafficLight;
+    [SerializeField]
+    private GameObject _finishLine;
+    [SerializeField]
+    private TMPro.TextMeshProUGUI _missionText;
+    [SerializeField]
+    private GameObject _endMissionPanel;
     [SerializeField]
     private GameObject[] _cars;
     private static GameManager _instance = null;
@@ -25,6 +32,10 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private PositionInTrack _positionController;
+    public PositionInTrack PositionController
+    {
+        get => _positionController;
+    }
     [SerializeField]
     private SoundManager _soundManager;
     public SoundManager SoundManager
@@ -56,39 +67,18 @@ public class GameManager : MonoBehaviour
         }
 
         _instance = this;
-        DontDestroyOnLoad( this.gameObject );
+        //DontDestroyOnLoad( this.gameObject );
     }
 
     void Start()
     {
         _soundManager.Play(SoundManager.Sounds.BGM_Gameplay,_soundManager.GetComponent<AudioSource>());
-        _currentMission = new Mission(15, 10000, CarColors.Blue, 3);
+        int randomCarAmount = Random.Range(6,15);
+        _currentMission = new Mission(randomCarAmount, 10000, (CarColors)Random.Range(0,5), Random.Range(1, randomCarAmount+1));
         _carsInTrack = new CarsController[_currentMission.NumberOfCars];
+        _missionText.text = string.Format("Um carro <color=#{0}>{1}</color> deve chegar na {2}ª posição!", ColorUtility.ToHtmlStringRGB(GetColor(_currentMission.TrackedCarColor)), _currentMission.TrackedCarColor.ToString(), _currentMission.TrackedCarPosition);
+        _missionText.transform.parent.gameObject.SetActive(true);
         SpawnCars();
-    }
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            PrepareToStart();
-        }
-
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            _followingCarIndex -= 1;
-
-            if (_followingCarIndex == -1) _followingCarIndex = _carsInTrack.Length-1;
-            _cameraController.CarToFollow = _carsInTrack[_followingCarIndex].transform;
-        }
-
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            _followingCarIndex += 1;
-
-            if (_followingCarIndex == _carsInTrack.Length) _followingCarIndex = 0;
-            _cameraController.CarToFollow = _carsInTrack[_followingCarIndex].transform;
-        }
     }
     
     private void SpawnCars()
@@ -101,21 +91,23 @@ public class GameManager : MonoBehaviour
         {
             _carsInTrack[i-1] = Instantiate(_cars[Random.Range(0,_cars.Length)], new Vector3(spawnX-i*5, 0.44f, spawnZ), Quaternion.identity).GetComponent<CarsController>();
             CarColors randomColor = (CarColors)Random.Range(0, 5);
-            _carsInTrack[i-1].SetColor(randomColor);
+            bool isMissionCar = false;
 
             if (randomColor == _currentMission.TrackedCarColor)
             {
                 numberOfMissionCars++;
                 missionColorWasSpawned = true;
+                isMissionCar = true;
             }
 
             if (i == _currentMission.NumberOfCars && !missionColorWasSpawned)
             {
                 numberOfMissionCars++;
                 randomColor = _currentMission.TrackedCarColor;
+                isMissionCar = true;
             }
 
-            _carsInTrack[i-1].SetColor(randomColor);
+            _carsInTrack[i-1].SetupCar(randomColor, isMissionCar, _currentMission.TrackedCarPosition);
 
             if (i % 5 == 0)
             {
@@ -136,8 +128,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void PrepareToStart()
+    public void PrepareToStart()
     {
+        _missionText.transform.parent.gameObject.SetActive(false);
         _soundManager.Play(SoundManager.Sounds.Largada, GetComponent<AudioSource>());
         _trafficLight.SetActive(true);
         Invoke("StartRace", 4f);
@@ -148,12 +141,11 @@ public class GameManager : MonoBehaviour
         if (_raceStarted) return;
 
         _positionController.RaceTrackLength = _currentMission.TrackLength;
-        _cameraController.CarToFollow = _carsInTrack[_followingCarIndex].transform;
         WeaponManager.Init(GetComponents<WeaponController>());
         Randomizer.Randomize(_carsInTrack);
         for(int i = 0; i < _carsInTrack.Length; i++)
         {
-            _carsInTrack[i].StartRacing(Random.Range(0,10), Random.Range(3,8));
+            _carsInTrack[i].StartRacing(Random.Range(0,10), Random.Range(4,6));
         }
         _raceStarted = true;
     }
@@ -161,35 +153,66 @@ public class GameManager : MonoBehaviour
     public void FinishRace(CarsController firstPlace)
     {
         bool missionComplete = false;
+        _finishLine.SetActive(true);
 
         foreach(CarsController car in _carsInMission)
         {
             if (_positionController.GetCarPosition(car) == _currentMission.TrackedCarPosition) missionComplete = true;
         }
 
-        Debug.Log("Mission complete: "+missionComplete);
-        _cameraController.CarToFollow = firstPlace.transform;
+        for(int i = 0; i < _carsInTrack.Length; i++)
+        {
+            _carsInTrack[i].FinishRacing();
+        }
+
+        StartCoroutine(SetupEndMissionPanel(missionComplete));
         _raceStarted = false;
+    }
+
+    public void ShakeCam(float amount)
+    {
+        _cameraController.shakeDuration = amount;
     }
 
     public Color GetColor(CarColors carColor)
     {
         switch (carColor)
         {
-            case CarColors.Black:
+            case CarColors.Preto:
                 return Color.black;
-            case CarColors.Blue:
+            case CarColors.Azul:
                 return Color.blue;
-            case CarColors.Green:
+            case CarColors.Verde:
                 return Color.green;
-            case CarColors.Red:
+            case CarColors.Vermelho:
                 return Color.red;
-            case CarColors.White:
+            case CarColors.Branco:
                 return Color.white;
-            case CarColors.Yellow:
+            case CarColors.Amarelo:
                 return Color.yellow;
             default:
                 return Color.magenta;
         }
+    }
+
+    public void LoadScene(int sceneIndex)
+    {
+        SceneManager.LoadScene(sceneIndex);
+    }
+
+    private IEnumerator SetupEndMissionPanel(bool missionComplete)
+    {   
+        yield return new WaitForSeconds(1f);
+        int conseqWins = missionComplete ? PlayerPrefs.GetInt("ConseqWins")+1 : PlayerPrefs.GetInt("ConseqWins");
+        
+        if (missionComplete) PlayerPrefs.SetInt("ConseqWins",conseqWins);
+
+        TMPro.TextMeshProUGUI[] panelTexts = _endMissionPanel.GetComponentsInChildren<TMPro.TextMeshProUGUI>();
+        panelTexts[0].text = missionComplete ? "Missão completa!" : "Missão fracassada!";
+        panelTexts[1].text = missionComplete ? "Continuar" : "Tentar Novamente";
+        panelTexts[2].text = "Sair";
+        panelTexts[3].text = "Missões consecutivas sem fracassar: "+conseqWins.ToString();
+        
+        _endMissionPanel.SetActive(true);
     }
 }

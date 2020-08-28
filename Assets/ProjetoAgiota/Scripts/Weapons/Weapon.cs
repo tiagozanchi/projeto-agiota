@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
+    [SerializeField]
+    private SoundManager.Sounds _soundToPlayOnHit;
     protected const string CAR_TAG = "Car";
 
     protected IEnumerator DestroyItself(float selfDestroyTime)
@@ -25,6 +27,7 @@ public class Weapon : MonoBehaviour
             {
                 controller.TakeDamage(damage);
             }
+            GameManager.Instance.SoundManager.Play(_soundToPlayOnHit, GameManager.Instance.GetComponent<AudioSource>());
         }
     }
 }

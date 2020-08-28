@@ -1,11 +1,11 @@
 ﻿public enum CarColors
 {
-    Black,
-    Blue,
-    Green,
-    Red,
-    Yellow,
-    White
+    Preto,
+    Azul,
+    Verde,
+    Vermelho,
+    Amarelo,
+    Branco
 }
 
 public class Mission

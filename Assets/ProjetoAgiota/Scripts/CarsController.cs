@@ -29,6 +29,9 @@ public class CarsController : MonoBehaviour
     private float _timeArrivedTargetPos;
     private bool _canLookForNewPos = true;
     private bool _hasArrivedTarget = false;
+    private bool _finishingRace = false;
+    private bool _isMissionCar = false;
+    private int _expectedPosition = -1;
     private const float _damageRecoveryTime = 3f;
 
     // Start is called before the first frame update
@@ -44,43 +47,53 @@ public class CarsController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!GameManager.Instance.RaceStarted) return;
-        
-        if (Vector3.Distance(transform.position, _targetPosition) > 5f)
+        if (GameManager.Instance.RaceStarted || _finishingRace)
         {
-            _rb.velocity = Vector3.zero;
-            _rb.MovePosition(transform.position + ((_targetPosition - transform.position) *_speed * Time.deltaTime));
-        }
-        else if (!_hasArrivedTarget)
-        {
-            _hasArrivedTarget = true;
-            _timeArrivedTargetPos = Time.time;
-        }
+            if (Vector3.Distance(transform.position, _targetPosition) > 5f)
+            {
+                _rb.velocity = Vector3.zero;
+                _rb.MovePosition(transform.position + ((_targetPosition - transform.position) *_speed * Time.deltaTime));
+            }
+            else if (!_hasArrivedTarget)
+            {
+                _hasArrivedTarget = true;
+                _timeArrivedTargetPos = Time.time;
+            }
 
-        if (transform.rotation != _defaultRotation)
-        {
-           transform.rotation = Quaternion.Lerp(transform.rotation, _defaultRotation, step*Time.deltaTime);
-           step += .5f;
-        }
-        else
-        {
-            step = 0f;
-        }
+            if (transform.rotation != _defaultRotation)
+            {
+            transform.rotation = Quaternion.Lerp(transform.rotation, _defaultRotation, step*Time.deltaTime);
+            step += .5f;
+            }
+            else
+            {
+                step = 0f;
+            }
 
-        _rb.position += Vector3.right * (Mathf.Sin(Time.time) * _shakeAmount);
+            _rb.position += Vector3.right * (Mathf.Sin(Time.time) * _shakeAmount);
 
-        if (Time.time > _timeArrivedTargetPos+_secondsToTryNewPos && _hasArrivedTarget && _canLookForNewPos) TryNewPos();
+            if (Time.time > _timeArrivedTargetPos+_secondsToTryNewPos && _hasArrivedTarget && _canLookForNewPos) TryNewPos();   
+        }
     }
 
     public void StartRacing(float luckAmount, float secondsToTryNewPos)
     {
-        _secondsToTryNewPos = 4f;//secondsToTryNewPos;
+        GameManager.Instance.SoundManager.Play(SoundManager.Sounds.CarEngine, _audioSource);
+        _secondsToTryNewPos = secondsToTryNewPos;
         _luckAmount = luckAmount;
         _targetPosition = transform.position;
     }
 
     private void TryNewPos()
     {
+        if (_finishingRace)
+        {
+            _finishingRace = false;
+            return; 
+        }
+
+        if(_isMissionCar && _expectedPosition == GetMyCurrentPosition()) return;
+
         bool forward = Random.Range(0, 10) > 2f;
         GetNewTargetPosition(forward);
         _hasArrivedTarget = false;
@@ -103,8 +116,10 @@ public class CarsController : MonoBehaviour
         GetNewTargetPosition(forward, 0);
     }
 
-    public void SetColor(CarColors newColor)
+    public void SetupCar(CarColors newColor, bool isMissionCar, int expectedPosition)
     {
+        _isMissionCar = isMissionCar;
+        _expectedPosition = expectedPosition; 
         _color = newColor;
         MeshRenderer[] carRenderers = GetComponentsInChildren<MeshRenderer>();
         
@@ -117,6 +132,7 @@ public class CarsController : MonoBehaviour
             return;
         }
 
+        GameManager.Instance.ShakeCam(0.05f);
         GetNewTargetPosition(false, recoilDistance);
         _canLookForNewPos = false;
         _animator.SetTrigger("Crash");
@@ -125,6 +141,8 @@ public class CarsController : MonoBehaviour
 
     public void Boost()
     {
+        GameManager.Instance.ShakeCam(0.3f);
+
         _nitroParticles.SetActive(true);
         _targetPosition = new Vector3(Random.Range(Mathf.Clamp(transform.position.x - 5f, -11, 11f), Mathf.Clamp(transform.position.x + 5f, -11, 11f)), transform.position.y, -70f);
         _canLookForNewPos = false;
@@ -136,5 +154,19 @@ public class CarsController : MonoBehaviour
         yield return new WaitForSeconds(_damageRecoveryTime);
         _nitroParticles.SetActive(false);
         _canLookForNewPos = true;
+    }
+
+    public void FinishRacing()
+    {
+        _canLookForNewPos = false;
+        _finishingRace = true;
+        _speed = 5f;
+        _targetPosition = _targetPosition = new Vector3(Random.Range(Mathf.Clamp(transform.position.x - 5f, -11, 11f), Mathf.Clamp(transform.position.x + 5f, -11, 11f)), transform.position.y, -100f);
+        _audioSource.Stop();
+    }
+
+    private int GetMyCurrentPosition()
+    {
+        return GameManager.Instance.PositionController.GetCarPosition(this);
     }
 }

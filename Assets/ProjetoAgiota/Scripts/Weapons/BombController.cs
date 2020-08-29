@@ -29,6 +29,6 @@ public class BombController : WeaponController
 
     void OnDisable()
     {
-        crosshair.SetActive(false);
+        if(crosshair != null) crosshair.SetActive(false);
     }
 }

@@ -77,6 +77,7 @@ public class WeaponManager : MonoBehaviour
 
         _cooldownImage.fillAmount = 0;
         _currentWeapon.enabled = true;
+        GameManager.Instance.OnItemReady();
         
     }
 }

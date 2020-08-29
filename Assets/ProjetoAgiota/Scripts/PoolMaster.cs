@@ -24,17 +24,14 @@ public class PoolMaster : MonoBehaviour
     {
         if (sInstance == null) sInstance = this;
         else Destroy(this);
+
+        initializePool(trafficPropsPool, trafficPropsQueue);
+        initializePool(scenarioPropsPool, scenarioPropsQueue);
     }
 
     public static PoolMaster getInstance()
     {
         return sInstance;
-    }
-
-    private void Start()
-    {
-        initializePool(trafficPropsPool, trafficPropsQueue);
-        initializePool(scenarioPropsPool, scenarioPropsQueue);
     }
 
     private void initializePool(PropsPool pool, Queue<GameObject> poolQueue) {

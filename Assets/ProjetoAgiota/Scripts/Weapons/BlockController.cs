@@ -29,6 +29,6 @@ public class BlockController : WeaponController
 
     void OnDisable()
     {
-        transparentBlock.SetActive(false);
+        if(transparentBlock != null) transparentBlock.SetActive(false);
     }
 }

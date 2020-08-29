@@ -26,6 +26,6 @@ public class NitroController : WeaponController
 
     void OnDisable()
     {
-        transparentGas.SetActive(false);
+        if(transparentGas != null) transparentGas.SetActive(false);
     }
 }

@@ -133,6 +133,7 @@ public class GameManager : MonoBehaviour
     public void PrepareToStart()
     {
         //kkkkk me desculpa por isso mas nao posso perder tempo
+        //AHUHAUAHUAHUAHUA
         _missionText.transform.parent.parent.parent.gameObject.SetActive(false);
         _soundManager.Play(SoundManager.Sounds.Largada, GetComponent<AudioSource>());
         _trafficLight.SetActive(true);
@@ -168,6 +169,9 @@ public class GameManager : MonoBehaviour
             _carsInTrack[i].FinishRacing();
         }
 
+        SoundManager.Sounds soundToPlay = missionComplete ? SoundManager.Sounds.Victory : SoundManager.Sounds.Loss;
+        _soundManager.Play(soundToPlay, GetComponent<AudioSource>());
+
         StartCoroutine(SetupEndMissionPanel(missionComplete));
         _raceStarted = false;
     }
@@ -175,6 +179,11 @@ public class GameManager : MonoBehaviour
     public void ShakeCam(float amount)
     {
         _cameraController.shakeDuration = amount;
+    }
+
+    public void OnItemReady()
+    {
+        _soundManager.Play(SoundManager.Sounds.ItemReady, GetComponent<AudioSource>());
     }
 
     public static Color GetColor(CarColors carColor)

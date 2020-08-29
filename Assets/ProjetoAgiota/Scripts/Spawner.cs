@@ -47,6 +47,14 @@ public class Spawner : MonoBehaviour
         {
             Debug.LogError("You haven't set spawn spots for scenario props");
         }
+
+        GameObject obj;
+        for (int i = 0; i < 15; i++)
+        {
+            obj = InstantiateScenarioProp();
+            Vector3 newPos = Vector3.forward * UnityEngine.Random.Range(40, 100) * -1f;
+            obj.transform.position -= newPos;
+        }
     }
 
     // Update is called once per frame
@@ -65,21 +73,28 @@ public class Spawner : MonoBehaviour
 
         if (scenarioProps.shouldInstantiate())
         {
-            GameObject obj = PoolMaster.getInstance().getScenarioProp();
-            Transform parent = scenarioProps.getRandomSpotTransform();
-
-            Vector3 newPos = new Vector3((UnityEngine.Random.value - 0.5f) * (parent.localScale.x * 7), 0, 0);
-            obj.transform.position = parent.position + newPos;
-            
-            Vector3 randomRotation = UnityEngine.Random.rotation.eulerAngles;
-            randomRotation.x = 0;
-            randomRotation.z = 0;
-            Quaternion newRotation = Quaternion.Euler(randomRotation);
-            obj.transform.rotation = newRotation;
-            
-            obj.AddComponent<MoveItselfAtRoadSpeed>();
+            InstantiateScenarioProp();
         }
     }
+
+    private GameObject InstantiateScenarioProp()
+    {
+        GameObject obj = PoolMaster.getInstance().getScenarioProp();
+        Transform parent = scenarioProps.getRandomSpotTransform();
+        Vector3 newPos = new Vector3((UnityEngine.Random.value - 0.5f) * (parent.localScale.x * 7), 0, 0);
+        obj.transform.position = parent.position + newPos;
+
+        Vector3 randomRotation = UnityEngine.Random.rotation.eulerAngles;
+        randomRotation.x = 0;
+        randomRotation.z = 0;
+        Quaternion newRotation = Quaternion.Euler(randomRotation);
+        obj.transform.rotation = newRotation;
+
+        obj.AddComponent<MoveItselfAtRoadSpeed>();
+
+        return obj;
+    }
+
 
 
 }

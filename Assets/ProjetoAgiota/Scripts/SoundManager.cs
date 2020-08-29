@@ -25,7 +25,10 @@ public class SoundManager : MonoBehaviour
         DerraparOleo,
         Explosion,
         Crash,
-        Nitro
+        Nitro,
+        Victory,
+        Loss,
+        ItemReady
     }
 
     [SerializeField]

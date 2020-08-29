@@ -75,6 +75,6 @@ public class HydrantController : WeaponController
     }
     void OnDisable()
     {
-        hydrantTransparent.SetActive(false);
+        if(hydrantTransparent != null) hydrantTransparent.SetActive(false);
     }
 }

@@ -10,7 +10,8 @@ public class PositionInTrack : MonoBehaviour
     private float _timeToCheckPositions = 0.1f;
 
     private float _lastTimeChecked;
-    private Slider _raceSlider;
+    [SerializeField]
+    private RectTransform _raceProgress;
 
     private float _raceTrackLength;
     public float RaceTrackLength
@@ -27,7 +28,7 @@ public class PositionInTrack : MonoBehaviour
 
     void Awake()
     {
-        _raceSlider = GetComponentInChildren<Slider>();
+
     }
 
     // Update is called once per frame
@@ -54,9 +55,9 @@ public class PositionInTrack : MonoBehaviour
         }
 
         _currentRacersAt += 10f * Time.deltaTime;
-        _raceSlider.value = _currentRacersAt/_raceTrackLength;
+        _raceProgress.anchoredPosition = Vector3.right * ((_currentRacersAt/_raceTrackLength) * 600f);
 
-        if (_raceSlider.value == 1)
+        if (_raceProgress.anchoredPosition.x >= 600f)
         {
             GameManager.Instance.FinishRace(_carsInOrder[0]);
         }

@@ -4,8 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - TrafficPropsSpawn
   - Car
+  - TrafficPropsSpawn
   - Street
   layers:
   - Default
@@ -16,7 +16,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - Traffic Light
   - 
   - 
   - 
